@@ -94,16 +94,16 @@ exports.register = async (req, res) => {
 
 // Login user
 exports.login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   try {
     // Validation
-    if (!username || !password) {
+    if (!email || !password) {
       return res
         .status(400)
         .json({ error: "Please provide username and password" });
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -117,6 +117,7 @@ exports.login = async (req, res) => {
     res.json({
       success: true,
       data: {
+        id: user.id,
         username: user.username,
         email: user.email,
         image: user.profilePicture,
@@ -186,7 +187,7 @@ exports.resetPassword = async (req, res) => {
 
     // await sendEmail(email, 'Reset Your Password', `Here is your verification code: ${verificationCode}`);
 
-    res.json({ message: "Reset password email sent" });
+    res.json({ message: "Verification code send to your email please Check your email for verification" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
